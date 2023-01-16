@@ -14,6 +14,10 @@ class User {
     };
   }
 
+  getUserWithSameEmail() {
+    return db.getDb().collection("users").findOne({ email: this.email });
+  }
+
   async signup() {
     const hashedPassword = await bcrypt.hash(this.passowrd, 12);
     await db.getDb().collection("users").insertOne({
@@ -22,6 +26,10 @@ class User {
       name: this.name,
       address: this.address,
     });
+  }
+  //암호확인
+  hasMatchingPassword(hashedPassword) {
+    return bcrypt.compare(this.password, hashedPassword);
   }
 }
 

@@ -9,10 +9,11 @@ const expressSession = require("express-session");
 const createSessionConfig = require("./config/session");
 const db = require("./data/database");
 const addCsrfTokenMiddleware = require("./middlewares/csrf-token");
+const checkAuthStatusMiddleware = require("./middlewares/check-auth");
 const errorHandlerMiddleware = require("./middlewares/error-handler");
 const authRoutes = require("./routes/auth.routes");
-
-//app.js는 이미 메인폴더라, ..말고 .으로 현재 내폴더=프로젝트 폴더에서 살펴보아라
+const productsRoutes = require("./routes/products.routes");
+const baseRoutes = require("./routes/base.routes");
 
 const app = express();
 //익스프레스 함수로 실행, app 객체
@@ -33,9 +34,12 @@ app.use(csrf());
 app.use(addCsrfTokenMiddleware);
 //이건 최종 미들웨어 함수라 위의 csrf랑 달리 직접 실행()하지 않음
 
+app.use(checkAuthStatusMiddleware);
+
 app.use(authRoutes);
 //모든 수신 요청에 대해 트리거될 미들웨어-authRoutes- 추가 가능
-
+app.use(baseRoutes);
+app.use(productsRoutes);
 app.use(errorHandlerMiddleware);
 
 db.connectToDatabase()

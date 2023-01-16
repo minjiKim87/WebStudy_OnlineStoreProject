@@ -63,3 +63,20 @@ a {
   text-decoration: none;
   color: var(--color-primary-400);
 }
+
+.btn {
+  cursor: pointer;
+  font: inherit;
+  /* inherit사용하면 버튼이나 btn 클래스 있는 모든 요소가 font강제상속 */
+  padding: var(--space-2) var(--space-6);
+  background-color: var(--var-color-primary-500);
+  color: var(--color-primary-500-contrast);
+  border: 1px solid var(--color-primary-500);
+  border-radius: var(--border-radius-small);
+}
+
+.btn:hover,
+.btn:active {
+  background-color: var(--color-primary-700);
+  border-color: var(--color-primary-700);
+}

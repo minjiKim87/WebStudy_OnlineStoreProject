@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const authUtil = require("../util/authentication");
 
 function getSignup(req, res) {
   res.render("customer/auth/signup");
@@ -25,11 +26,38 @@ function getLogin(req, res) {
   res.render("customer/auth/signup");
 }
 
+async function login(req, res) {
+  const user = new User(req.body.email, req.body.password);
+  const existingUser = await user.getUserWithSameEmail();
+
+  if (!existingUser) {
+    //잘못된 이메일
+    res.redirect("/login");
+    return;
+  }
+
+  const passwordIsCorrect = await user.hasMatchingPassword(
+    existingUser.password
+  );
+
+  if (!passwordIsCorrect) {
+    res.redirect("/login");
+    return;
+  }
+
+  authUtil.createUserSession(req, existingUser, function () {
+    res.redirect("/");
+  });
+}
+
+function logout(req, res) {}
+
 module.exports = {
   getSignup: getSignup,
   getLogin: getLogin,
   signup: signup,
-
+  login: login,
+  logout: logout,
   //왼쪽은 키, 오른쪽은 getsignup함수에 대한 포인터
 };
 
