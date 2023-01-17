@@ -6,6 +6,7 @@ function checkAuthStatus(req, res, next) {
   }
   res.locals.uid = uid;
   res.locals.isAuth = true; //현재 작업중인 사용자가 인증되었다
+  res.locals.isAdmin = req.session.isAdmin;
   next();
 }
 

@@ -3,9 +3,9 @@ const db = require("../data/database");
 const bcrypt = require("bcryptjs");
 
 class User {
-  constructor(email, passowrd, fullname, street, postal, city) {
+  constructor(email, password, fullname, street, postal, city) {
     this.email = email;
-    this.passowrd = passowrd;
+    this.password = password;
     this.name = fullname;
     this.address = {
       street: street,
@@ -18,11 +18,21 @@ class User {
     return db.getDb().collection("users").findOne({ email: this.email });
   }
 
+  async existsAlready() {
+    const existingUser = await this.getUserWithSameEmail();
+    //해당 이메일 가진 사용자 존재시 참 반환
+
+    if (existingUser) {
+      return true;
+    }
+
+    return false;
+  }
   async signup() {
-    const hashedPassword = await bcrypt.hash(this.passowrd, 12);
+    const hashedPassword = await bcrypt.hash(this.password, 12);
     await db.getDb().collection("users").insertOne({
       email: this.email,
-      passowrd: hashedPassword,
+      password: hashedPassword,
       name: this.name,
       address: this.address,
     });
