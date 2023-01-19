@@ -10,10 +10,12 @@ const createSessionConfig = require("./config/session");
 const db = require("./data/database");
 const addCsrfTokenMiddleware = require("./middlewares/csrf-token");
 const checkAuthStatusMiddleware = require("./middlewares/check-auth");
+const protectRoutesMiddleware = require("./middlewares/protect-routes");
 const errorHandlerMiddleware = require("./middlewares/error-handler");
 const authRoutes = require("./routes/auth.routes");
 const productsRoutes = require("./routes/products.routes");
 const baseRoutes = require("./routes/base.routes");
+const adminRoutes = require("./routes/admin.routes");
 
 const app = express();
 //익스프레스 함수로 실행, app 객체
@@ -24,6 +26,7 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(express.static("public"));
 //public 폴더의 모든 내용을 요청 가능
+app.use("/products/assets", express.static("product-data"));
 app.use(express.urlencoded({ extended: false }));
 
 const sessionConfig = createSessionConfig();
@@ -40,6 +43,8 @@ app.use(authRoutes);
 //모든 수신 요청에 대해 트리거될 미들웨어-authRoutes- 추가 가능
 app.use(baseRoutes);
 app.use(productsRoutes);
+app.use(errorHandlerMiddleware);
+
 app.use(errorHandlerMiddleware);
 
 db.connectToDatabase()
