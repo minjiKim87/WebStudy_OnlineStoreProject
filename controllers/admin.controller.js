@@ -40,7 +40,39 @@ async function getUpdateProduct(req, res) {
     next(error);
   }
 }
-function updateProduct() {}
+function updateProduct(req, res) {
+  const product = new Product({
+    ...req.body,
+    _id: req.params.id,
+  });
+
+  if (req.file) {
+    //replace the old image with the new one
+    product.replaceImage(req.file.filename);
+  }
+
+  try {
+    await product.save();
+  }catch(error){
+    next(error);
+    return;
+  }
+
+  res.redirect('/admin/products')
+  
+}
+
+async function deleteProduct(req,res, next){
+   let product;
+   try{
+    product = await Product.findById(req.params.id);
+    await product.remove();
+   }catch(error){
+    return next(error);
+   }
+
+   res.redirect('/admin/products');
+}
 
 module.exports = {
   getProducts: getProducts,
@@ -48,4 +80,5 @@ module.exports = {
   createNewProduct: createNewProduct,
   getUpdateProduct: getUpdateProduct,
   updateProduct: updateProduct,
+  deleteProduct:deleteProduct
 };
