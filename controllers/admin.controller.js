@@ -29,7 +29,7 @@ async function createNewProduct() {
     return;
   }
 
-  res.rendirect("/admin/products");
+  res.redirect("/admin/products");
 }
 
 async function getUpdateProduct(req, res) {
@@ -40,7 +40,7 @@ async function getUpdateProduct(req, res) {
     next(error);
   }
 }
-function updateProduct(req, res) {
+async function updateProduct(req, res) {
   const product = new Product({
     ...req.body,
     _id: req.params.id,
@@ -53,25 +53,24 @@ function updateProduct(req, res) {
 
   try {
     await product.save();
-  }catch(error){
+  } catch (error) {
     next(error);
     return;
   }
 
-  res.redirect('/admin/products')
-  
+  res.redirect("/admin/products");
 }
 
-async function deleteProduct(req,res, next){
-   let product;
-   try{
+async function deleteProduct(req, res, next) {
+  let product;
+  try {
     product = await Product.findById(req.params.id);
     await product.remove();
-   }catch(error){
+  } catch (error) {
     return next(error);
-   }
+  }
 
-   res.json({message: 'Deleted product!'});
+  res.json({ message: "Deleted product!" });
 }
 
 module.exports = {
@@ -80,5 +79,5 @@ module.exports = {
   createNewProduct: createNewProduct,
   getUpdateProduct: getUpdateProduct,
   updateProduct: updateProduct,
-  deleteProduct:deleteProduct
+  deleteProduct: deleteProduct,
 };
